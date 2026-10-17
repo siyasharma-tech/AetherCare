@@ -1,0 +1,109 @@
+@use "tokens" as *;
+@use "mixins" as *;
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  gap: 30px;
+  align-items: start;
+
+  @include respond(md) { grid-template-columns: 1fr; }
+}
+
+.profile-side {
+  background: $deep;
+  color: $white;
+  border-radius: 18px;
+  padding: 35px 25px;
+  text-align: center;
+
+  h2 { margin: 0 0 5px; }
+  > p { color: #a8bed6; margin: 0 0 18px; font-size: 12px; }
+
+  @include respond(md) {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-align: left;
+  }
+
+  @include respond(sm) { flex-wrap: wrap; }
+}
+
+.profile-avatar {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  background: #d7e9f8;
+  margin: 0 auto 18px;
+  font-size: 28px;
+  @include transition(transform);
+
+  &:hover { transform: scale(1.06); }
+
+  @include respond(md) { margin: 0; flex: none; }
+}
+
+.profile-badge {
+  display: inline-block;
+  padding: 7px 10px;
+  background: tint($white, 0.1);
+  border-radius: 20px;
+  font-size: 10px;
+
+  @include respond(md) { margin-left: auto; }
+  @include respond(sm) { margin-left: 0; width: 100%; text-align: center; }
+}
+
+.profile-main {
+  @include surface(18px);
+  padding: 35px;
+
+  h1 { font-size: 42px; margin-bottom: 8px; }
+  > p { color: $muted; margin-top: 0; }
+
+  @include respond(sm) { padding: 22px; }
+}
+
+.profile-form {
+  box-shadow: none;
+  border: 0;
+  padding: 20px 0 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 15px;
+
+  .primary-btn { grid-column: 1 / -1; }
+
+  @include respond(sm) { grid-template-columns: 1fr; }
+}
+
+.profile-view-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  margin-top: 24px;
+
+  @include respond(sm) { grid-template-columns: 1fr; }
+}
+
+.profile-view-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid $line;
+  @include transition(border-color);
+
+  &:hover { border-bottom-color: $teal; }
+
+  span {
+    color: $muted;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  strong { font-size: 15px; color: $ink; }
+}

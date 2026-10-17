@@ -1,0 +1,338 @@
+@use "tokens" as *;
+@use "mixins" as *;
+
+// ---------------------------------------------------------------
+// Navbar
+// Desktop: logo | segmented link group with a gliding pill | account
+// Mobile:  logo | menu button, links drop down in a panel
+// ---------------------------------------------------------------
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  background: tint($surface, 0.8);
+  border-bottom: 1px solid transparent;
+  backdrop-filter: blur(16px) saturate(1.5);
+  @include transition(background-color border-color box-shadow);
+
+  // Once the page has scrolled the bar becomes more solid and casts a shadow.
+  &.scrolled {
+    background: tint($surface, 0.94);
+    border-bottom-color: $line;
+    box-shadow: 0 10px 30px -14px tint($shadow-ink, 0.22);
+  }
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+// Thin reading-progress line along the bottom edge. Its width is set
+// from scroll position in Navbar.jsx, so it has no transition of its own.
+.nav-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, $teal-light, $teal);
+  transform-origin: left;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+
+// ---- Logo ---------------------------------------------------------
+
+.logo {
+  font-family: "Manrope", sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  display: inline-flex;
+  align-items: center;
+
+  span:not(.logo-mark) { color: $teal; }
+
+  &:hover .logo-mark { transform: rotate(-8deg) scale(1.08); }
+}
+
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin-right: 9px;
+  vertical-align: middle;
+  @include transition(transform, 0.35s);
+
+  img { width: 100%; height: 100%; object-fit: contain; }
+}
+
+.footer-logo .logo-mark {
+  background: $white;
+  border-radius: 10px;
+  padding: 3px;
+}
+
+// ---- Link group ---------------------------------------------------
+// On desktop the wrapper divs disappear (display: contents) so the links
+// and the account area sit directly in the navbar row.
+
+.nav-panel,
+.nav-panel-inner { display: contents; }
+
+.nav-links {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: tint($soft, 0.9);
+  border: 1px solid $line;
+  border-radius: $radius-pill;
+}
+
+// White pill that glides to the hovered, focused or current link.
+.nav-pill {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  border-radius: $radius-pill;
+  background: $pill;
+  box-shadow: 0 1px 2px tint($shadow-ink, 0.1), 0 6px 14px -4px tint($shadow-ink, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.45s $ease-out,
+    width 0.45s $ease-out,
+    opacity $t-base ease;
+
+  &.visible { opacity: 1; }
+}
+
+.nav-link {
+  position: relative;
+  z-index: 1;
+  padding: 9px 16px;
+  border-radius: $radius-pill;
+  color: $muted;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  @include transition(color);
+
+  &:hover { color: $ink; }
+  &.active { color: $teal; }
+  &:focus-visible { outline-offset: 0; }
+}
+
+// ---- Account area -------------------------------------------------
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.nav-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: $mint;
+  color: $teal;
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 0 0 2px $surface, 0 0 0 3px $line;
+}
+
+.nav-user {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+
+  strong {
+    font-size: 13px;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  small { font-size: 11px; color: $muted; }
+}
+
+.nav-logout {
+  border: 1px solid $line;
+  background: $surface;
+  color: $ink;
+  border-radius: $radius-pill;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  @include transition(border-color color background-color transform);
+
+  &:hover { border-color: $danger; color: $danger; background: $danger-bg; }
+  &:active { transform: scale(0.96); }
+}
+
+.nav-cta {
+  border-radius: $radius-pill;
+  padding: 10px 22px;
+}
+
+// ---- Desktop order: logo | links (centred) | theme toggle | login ----
+// The theme toggle sits right next to the login / account area, which is
+// pushed to the far right edge. The links take the free space in the middle.
+
+.nav-links { order: 1; margin: 0 auto; }
+
+.nav-end { order: 2; }
+
+.nav-auth,
+.nav-cta {
+  order: 3;
+  margin-left: -10px; // inner gap 24px -> 14px between toggle and login
+}
+
+// ---- Menu button (mobile only) ------------------------------------
+
+.nav-toggle {
+  display: none;
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border: 1px solid $line;
+  background: $surface;
+  border-radius: $radius-md;
+  @include transition(background-color border-color);
+
+  &:hover { background: $soft; border-color: $line-strong; }
+
+  // Three bars that fold into a cross when the menu is open.
+  span {
+    position: absolute;
+    left: 11px;
+    right: 11px;
+    height: 2px;
+    border-radius: 2px;
+    background: $ink;
+    @include transition(top transform opacity);
+
+    &:nth-child(1) { top: 14px; }
+    &:nth-child(2) { top: 20px; }
+    &:nth-child(3) { top: 26px; }
+  }
+
+  &[aria-expanded="true"] {
+    span:nth-child(1) { top: 20px; transform: rotate(45deg); }
+    span:nth-child(2) { opacity: 0; }
+    span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+  }
+}
+
+// ---- Mobile layout --------------------------------------------------
+
+@include respond(md) {
+  .nav-toggle { display: block; }
+
+  // The panel grows from zero height using a grid-row transition, so it
+  // opens smoothly without measuring anything in JavaScript.
+  .nav-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    background: tint($surface, 0.97);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid $line;
+    box-shadow: 0 24px 40px -20px tint($shadow-ink, 0.28);
+    transition:
+      grid-template-rows 0.4s $ease-out,
+      visibility 0s linear 0.4s;
+
+    &.open {
+      grid-template-rows: 1fr;
+      visibility: visible;
+      transition:
+        grid-template-rows 0.4s $ease-out,
+        visibility 0s;
+    }
+  }
+
+  .nav-panel-inner {
+    display: block;
+    min-height: 0;
+    overflow: hidden;
+    width: min(calc(100% - 28px), 1160px);
+    margin: 0 auto;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    margin-top: 12px;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .nav-pill { display: none; }
+
+  // Links slide in one after another each time the menu opens.
+  .nav-link {
+    padding: 13px 14px;
+    border-radius: $radius-md;
+    font-size: 15px;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition:
+      color $t-base $ease-out,
+      background-color $t-base $ease-out,
+      opacity 0.3s $ease-out,
+      transform 0.4s $ease-out;
+
+    &.active { background: $mint; }
+    &:hover { background: $soft; }
+    &.active:hover { background: $mint; }
+  }
+
+  .nav-panel.open .nav-link {
+    opacity: 1;
+    transform: none;
+
+    @for $i from 2 through 8 {
+      &:nth-child(#{$i}) { transition-delay: 0s, 0s, #{($i - 2) * 45 + 80}ms, #{($i - 2) * 45 + 80}ms; }
+    }
+  }
+
+  .nav-auth {
+    margin: 10px 0 18px;
+    padding-top: 14px;
+    border-top: 1px solid $line;
+  }
+
+  .nav-logout { margin-left: auto; }
+
+  .nav-cta {
+    display: flex;
+    width: 100%;
+    margin: 10px 0 18px;
+    padding: 13px 22px;
+  }
+}

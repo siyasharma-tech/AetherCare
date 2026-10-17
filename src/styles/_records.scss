@@ -1,0 +1,100 @@
+@use "tokens" as *;
+@use "mixins" as *;
+
+.records-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+
+  @include respond(md) { grid-template-columns: repeat(2, 1fr); }
+  @include respond(sm) { grid-template-columns: 1fr; }
+}
+
+.record-card {
+  @include surface;
+  padding: 22px;
+  @include card-hover(3px);
+
+  > p { margin: 0; color: $muted; font-size: 12px; }
+  h3 { margin: 8px 0 5px; font-size: 16px; }
+}
+
+.record-icon {
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  background: $mint;
+  color: $teal;
+  border-radius: $radius-md;
+  @include icon-fill(".record-card");
+}
+
+.record-type {
+  display: block;
+  color: $teal;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-top: 20px;
+}
+
+.record-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid $line;
+  padding-top: 15px;
+  margin-top: 18px;
+  font-size: 10px;
+  color: $muted;
+}
+
+// ---- Details dialog -------------------------------------------------
+// It only exists while open, so the animation plays each time it appears.
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 48, 70, 0.45);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  padding: 20px;
+  animation: fade-in 0.22s ease-out;
+}
+
+.modal {
+  width: min(500px, 100%);
+  background: $surface;
+  border-radius: 18px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+  animation: modal-in 0.34s $ease-out;
+
+  h2 { margin: 0 0 20px; font-family: "Manrope", sans-serif; }
+  p { color: $muted; font-size: 13px; line-height: 1.6; }
+}
+
+.close-btn {
+  position: absolute;
+  right: 18px;
+  top: 14px;
+  border: 0;
+  background: none;
+  font-size: 26px;
+  color: $muted;
+  @include transition(transform color);
+
+  &:hover { color: $ink; transform: rotate(90deg); }
+}
+
+.note-box {
+  background: $soft;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 13px;
+  margin-top: 15px;
+}

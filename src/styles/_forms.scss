@@ -1,0 +1,173 @@
+@use "tokens" as *;
+@use "mixins" as *;
+
+// One shared look for every text field, dropdown and textarea.
+%field {
+  width: 100%;
+  border: 1px solid $line;
+  background: $surface;
+  border-radius: 10px;
+  padding: 13px 14px;
+  outline: 0;
+  color: $ink;
+  @include transition(border-color box-shadow background-color);
+
+  &:hover { border-color: $line-strong; }
+
+  &:focus {
+    border-color: $focus-border;
+    box-shadow: 0 0 0 4px tint($teal, 0.12);
+  }
+
+  &:disabled {
+    background: $soft;
+    color: $muted;
+    cursor: not-allowed;
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    @include transition(color);
+  }
+
+  // The label picks up the brand colour while its field is being edited.
+  &:focus-within label { color: $teal; }
+
+  input, select, textarea { @extend %field; }
+  textarea { resize: vertical; }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  @include respond(sm) { grid-template-columns: 1fr; gap: 0; }
+}
+
+.form-note {
+  text-align: center;
+  color: $muted-soft;
+  font-size: 10px;
+  margin: 14px 0 0;
+}
+
+// Errors arrive with a short shake so they are noticed. The pages give the
+// element a changing key, so a repeated mistake shakes again.
+.form-error {
+  color: $danger;
+  font-size: 13px;
+  font-weight: 700;
+  margin: -8px 0 16px;
+  animation: shake 0.4s $ease-out;
+}
+
+.save-message {
+  grid-column: 1 / -1;
+  color: $success;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 13px;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+
+  select { @extend %field; width: 220px; }
+
+  @include respond(sm) {
+    flex-direction: column;
+
+    select { width: 100%; }
+  }
+}
+
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: $surface;
+  border: 1px solid $line;
+  border-radius: 11px;
+  padding: 0 15px;
+  @include transition(border-color box-shadow);
+
+  &:hover { border-color: $line-strong; }
+
+  &:focus-within {
+    border-color: $focus-border;
+    box-shadow: 0 0 0 4px tint($teal, 0.12);
+  }
+
+  span { font-size: 24px; color: $muted; @include transition(color); }
+  &:focus-within span { color: $teal; }
+
+  input {
+    border: 0;
+    outline: 0;
+    width: 100%;
+    padding: 14px 0;
+    background: transparent;
+  }
+}
+
+.form-layout {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 70px;
+  align-items: start;
+
+  @include respond(md) { grid-template-columns: 1fr; gap: 30px; }
+}
+
+.form-intro {
+  h1 {
+    font-size: 46px;
+    @include respond(sm) { font-size: 39px; }
+  }
+
+  > p { color: $muted; line-height: 1.7; max-width: 450px; }
+}
+
+.mini-doctor {
+  @include surface($radius-md);
+  margin-top: 35px;
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  padding: 15px;
+  max-width: 390px;
+
+  div:last-child { display: flex; flex-direction: column; gap: 3px; }
+  span { color: $muted; font-size: 11px; }
+}
+
+.appointment-form,
+.profile-form {
+  background: $surface;
+  border: 1px solid $line;
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: $shadow-md;
+}
+
+.appointment-form {
+  @include respond(sm) { padding: 22px; }
+}
+
+.add-timing-form {
+  display: flex;
+  gap: 10px;
+
+  input { @extend %field; flex: 1; width: auto; }
+}

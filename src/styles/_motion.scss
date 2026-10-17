@@ -1,0 +1,42 @@
+@use "tokens" as *;
+
+// ---------------------------------------------------------------
+// Keyframes. Motion is kept for moments that mean something:
+// a page arriving, a dialog opening, a booking being confirmed,
+// an error appearing. Nothing loops except the two hero cards.
+// ---------------------------------------------------------------
+
+@keyframes page-in {
+  from { opacity: 0; }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(18px); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.4); }
+}
+
+@keyframes ring {
+  from { box-shadow: 0 0 0 0 tint($success, 0.35); }
+  to   { box-shadow: 0 0 0 24px tint($success, 0); }
+}
+
+@keyframes shake {
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
+}
