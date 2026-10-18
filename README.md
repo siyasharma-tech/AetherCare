@@ -92,3 +92,5 @@ Planned for a production-ready version, backed by a real server and database:
 ## Disclaimer
 
 AetherCare is a demonstration project. It does not process real medical information or real payments.
+
+Latest Aether Care project update.
