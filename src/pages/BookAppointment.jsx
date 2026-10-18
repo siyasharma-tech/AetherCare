@@ -4,6 +4,7 @@ import { useDoctors, isDoctorBookable } from "../context/DoctorsContext";
 import { useAuth } from "../context/AuthContext";
 import { usePatients } from "../context/PatientsContext";
 import useLocalStorage from "../hooks/useLocalStorage";
+import { getOpenSlots, isPastDate, isPastSlot, todayISO } from "../utils/slots";
 
 function BookAppointment() {
   const { doctors } = useDoctors();
@@ -37,6 +38,13 @@ function BookAppointment() {
       (a) => a.doctorId === currentDoctor.id && a.date === targetDate && a.time === targetTime
     );
 
+  // Only slots the doctor still offers on this date (removed ones are hidden),
+  // and not already in the past if the date is today.
+  const availableSlots = useMemo(() => {
+    if (!date || !currentDoctor) return [];
+    return getOpenSlots(currentDoctor, date).filter((slot) => !isPastSlot(date, slot));
+  }, [currentDoctor, date]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
@@ -47,6 +55,17 @@ function BookAppointment() {
     }
 
     if (!date || !time || !reason.trim()) return;
+
+    if (isPastDate(date)) {
+      setError("You can't book an appointment for a past date. Please choose today or later.");
+      return;
+    }
+
+    if (!availableSlots.includes(time)) {
+      setError(`The ${time} slot is no longer available on ${date}. Please choose another time.`);
+      setTime("");
+      return;
+    }
 
     // Re-check right before booking in case the slot was taken in the meantime.
     if (isSlotTaken(date, time)) {
@@ -152,6 +171,7 @@ function BookAppointment() {
               <input
                 id="date"
                 type="date"
+                min={todayISO()}
                 value={date}
                 onChange={(e) => { setDate(e.target.value); setTime(""); setError(""); }}
                 required
@@ -167,7 +187,7 @@ function BookAppointment() {
                 required
               >
                 <option value="">Select time</option>
-                {currentDoctor.timings.map((item) => {
+                {availableSlots.map((item) => {
                   const taken = date ? isSlotTaken(date, item) : false;
                   return (
                     <option key={item} value={item} disabled={taken}>
@@ -177,7 +197,12 @@ function BookAppointment() {
                 })}
               </select>
               {!date && (
-                <p className="panel-hint" style={{ marginTop: 6 }}>Pick a date to see which slots are already booked.</p>
+                <p className="panel-hint" style={{ marginTop: 6 }}>Pick a date to see the available slots.</p>
+              )}
+              {date && availableSlots.length === 0 && (
+                <p className="panel-hint" style={{ marginTop: 6 }}>
+                  No slots available on this date. Please try another day.
+                </p>
               )}
             </div>
           </div>

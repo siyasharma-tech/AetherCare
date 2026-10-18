@@ -54,7 +54,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 // Every route renders a <main>, so one soft fade covers all page changes.
-main { animation: page-in 0.4s ease-out backwards; }
+main { animation: page-in 0.7s ease-out backwards; }
 
 // Respect people who ask their system for less motion.
 @media (prefers-reduced-motion: reduce) {

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect } from "react";
 import baseDoctors from "../data/doctors";
 import useLocalStorage from "../hooks/useLocalStorage";
+import { compareTimes } from "../utils/slots";
 
 const DoctorsContext = createContext(null);
 
@@ -37,7 +38,7 @@ export function DoctorsProvider({ children }) {
     setDoctors((prev) =>
       prev.map((doc) =>
         doc.id === doctorId && !doc.timings.includes(clean)
-          ? { ...doc, timings: [...doc.timings, clean] }
+          ? { ...doc, timings: [...doc.timings, clean].sort(compareTimes) }
           : doc
       )
     );
@@ -48,6 +49,36 @@ export function DoctorsProvider({ children }) {
       prev.map((doc) =>
         doc.id === doctorId ? { ...doc, timings: doc.timings.filter((t) => t !== time) } : doc
       )
+    );
+  };
+
+  // Remove one slot for ONE date only (e.g. the doctor is busy that day).
+  // The slot disappears from the patient booking page for that date.
+  const blockSlot = (doctorId, date, time) => {
+    if (!date || !time) return;
+    setDoctors((prev) =>
+      prev.map((doc) => {
+        if (doc.id !== doctorId) return doc;
+        const blocked = doc.blockedSlots || {};
+        const forDate = blocked[date] || [];
+        if (forDate.includes(time)) return doc;
+        return { ...doc, blockedSlots: { ...blocked, [date]: [...forDate, time] } };
+      })
+    );
+  };
+
+  // Put a removed slot back for that date.
+  const unblockSlot = (doctorId, date, time) => {
+    setDoctors((prev) =>
+      prev.map((doc) => {
+        if (doc.id !== doctorId) return doc;
+        const blocked = doc.blockedSlots || {};
+        const forDate = (blocked[date] || []).filter((t) => t !== time);
+        const next = { ...blocked };
+        if (forDate.length) next[date] = forDate;
+        else delete next[date];
+        return { ...doc, blockedSlots: next };
+      })
     );
   };
 
@@ -67,6 +98,7 @@ export function DoctorsProvider({ children }) {
       onLeave: false,
       fee: Number(fee) || 0,
       timings: [],
+      blockedSlots: {},
       about: `New ${specialty.toLowerCase()} on AetherCare.`
     };
 
@@ -80,7 +112,7 @@ export function DoctorsProvider({ children }) {
   };
 
   return (
-    <DoctorsContext.Provider value={{ doctors, toggleLeave, addTiming, removeTiming, getDoctor, addDoctor, removeDoctor }}>
+    <DoctorsContext.Provider value={{ doctors, toggleLeave, addTiming, removeTiming, blockSlot, unblockSlot, getDoctor, addDoctor, removeDoctor }}>
       {children}
     </DoctorsContext.Provider>
   );

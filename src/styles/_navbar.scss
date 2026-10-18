@@ -71,7 +71,7 @@
   height: 38px;
   margin-right: 9px;
   vertical-align: middle;
-  @include transition(transform, 0.35s);
+  @include transition(transform, 0.55s);
 
   img { width: 100%; height: 100%; object-fit: contain; }
 }
@@ -112,8 +112,8 @@
   opacity: 0;
   pointer-events: none;
   transition:
-    transform 0.45s $ease-out,
-    width 0.45s $ease-out,
+    transform 0.7s $ease-out,
+    width 0.7s $ease-out,
     opacity $t-base ease;
 
   &.visible { opacity: 1; }
@@ -261,14 +261,14 @@
     border-bottom: 1px solid $line;
     box-shadow: 0 24px 40px -20px tint($shadow-ink, 0.28);
     transition:
-      grid-template-rows 0.4s $ease-out,
-      visibility 0s linear 0.4s;
+      grid-template-rows 0.65s $ease-out,
+      visibility 0s linear 0.65s;
 
     &.open {
       grid-template-rows: 1fr;
       visibility: visible;
       transition:
-        grid-template-rows 0.4s $ease-out,
+        grid-template-rows 0.65s $ease-out,
         visibility 0s;
     }
   }
@@ -304,8 +304,8 @@
     transition:
       color $t-base $ease-out,
       background-color $t-base $ease-out,
-      opacity 0.3s $ease-out,
-      transform 0.4s $ease-out;
+      opacity 0.5s $ease-out,
+      transform 0.65s $ease-out;
 
     &.active { background: $mint; }
     &:hover { background: $soft; }
@@ -317,7 +317,7 @@
     transform: none;
 
     @for $i from 2 through 8 {
-      &:nth-child(#{$i}) { transition-delay: 0s, 0s, #{($i - 2) * 45 + 80}ms, #{($i - 2) * 45 + 80}ms; }
+      &:nth-child(#{$i}) { transition-delay: 0s, 0s, #{($i - 2) * 70 + 120}ms, #{($i - 2) * 70 + 120}ms; }
     }
   }
 

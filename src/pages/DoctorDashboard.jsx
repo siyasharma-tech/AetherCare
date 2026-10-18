@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useDoctors } from "../context/DoctorsContext";
+import { getBlockedSlots, getOpenSlots, nextDays } from "../utils/slots";
 
 function DoctorDashboard() {
   const { user, logout } = useAuth();
-  const { getDoctor, toggleLeave, addTiming, removeTiming, removeDoctor } = useDoctors();
+  const { getDoctor, toggleLeave, addTiming, removeTiming, blockSlot, unblockSlot, removeDoctor } = useDoctors();
   const [newTime, setNewTime] = useState("");
   const navigate = useNavigate();
 
@@ -36,6 +37,8 @@ function DoctorDashboard() {
       </main>
     );
   }
+
+  const week = nextDays(7);
 
   const handleAddTime = (e) => {
     e.preventDefault();
@@ -104,8 +107,70 @@ function DoctorDashboard() {
         </section>
 
         <section className="schedule-panel">
-          <h3>Appointment time slots</h3>
-          <p className="panel-hint">These are the times patients can choose from when booking with you.</p>
+          <h3>This week's availability</h3>
+          <p className="panel-hint">
+            Busy on a particular day? Click × on a slot to remove it for that day only (for example, Tuesday 4 PM–6 PM).
+            It disappears from the patient booking page for that date, and your other days stay untouched.
+          </p>
+
+          <div style={{ display: "grid", gap: 14, marginTop: 12 }}>
+            {week.map((day) => {
+              const open = getOpenSlots(doctor, day.iso);
+              const removed = getBlockedSlots(doctor, day.iso).filter((t) => doctor.timings.includes(t));
+
+              return (
+                <div
+                  key={day.iso}
+                  style={{ border: "1px solid var(--line)", borderRadius: 12, padding: "12px 16px" }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
+                    <strong>📆 {day.label}</strong>
+                    <span className="result-count">{open.length} open · {removed.length} removed</span>
+                  </div>
+
+                  <div className="timings editable-timings" style={{ marginBottom: removed.length ? 10 : 0 }}>
+                    {open.length > 0 ? (
+                      open.map((time) => (
+                        <span key={time} className="timing-chip">
+                          {time}
+                          <button
+                            type="button"
+                            aria-label={`Remove ${time} on ${day.label}`}
+                            onClick={() => blockSlot(doctor.id, day.iso, time)}
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))
+                    ) : (
+                      <p className="panel-hint" style={{ margin: 0 }}>No open slots this day.</p>
+                    )}
+                  </div>
+
+                  {removed.length > 0 && (
+                    <div className="timings editable-timings" style={{ marginBottom: 0 }}>
+                      <span className="panel-hint" style={{ margin: 0, alignSelf: "center" }}>Removed:</span>
+                      {removed.map((time) => (
+                        <button
+                          type="button"
+                          key={time}
+                          className="outline-btn"
+                          onClick={() => unblockSlot(doctor.id, day.iso, time)}
+                        >
+                          ↺ {time}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="schedule-panel">
+          <h3>Daily time slots</h3>
+          <p className="panel-hint">Your usual slots for every day. Patients can choose from these when booking with you.</p>
 
           <div className="timings editable-timings">
             {doctor.timings.length > 0 ? (

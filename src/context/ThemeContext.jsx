@@ -31,7 +31,7 @@ export function ThemeProvider({ children }) {
       if (!document.startViewTransition || reduceMotion) {
         if (!reduceMotion) {
           root.classList.add("theme-fade");
-          window.setTimeout(() => root.classList.remove("theme-fade"), 600);
+          window.setTimeout(() => root.classList.remove("theme-fade"), 900);
         }
         apply();
         return;
@@ -57,7 +57,7 @@ export function ThemeProvider({ children }) {
             ]
           },
           {
-            duration: 950,
+            duration: 1400,
             easing: "cubic-bezier(0.22, 1, 0.36, 1)",
             pseudoElement: "::view-transition-new(root)"
           }

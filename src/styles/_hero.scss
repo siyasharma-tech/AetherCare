@@ -29,9 +29,9 @@
 
   // The one orchestrated moment on the site: the headline block settles in,
   // one line after another, the first time the home page opens.
-  > * { animation: rise-in 0.8s $ease-out backwards; }
+  > * { animation: rise-in 1.2s $ease-out backwards; }
   @for $i from 1 through 5 {
-    > :nth-child(#{$i}) { animation-delay: #{($i - 1) * 90}ms; }
+    > :nth-child(#{$i}) { animation-delay: #{($i - 1) * 140}ms; }
   }
 
   @include respond(md) {
