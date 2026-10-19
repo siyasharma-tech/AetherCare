@@ -243,7 +243,13 @@
 
 // ---- Mobile layout --------------------------------------------------
 
-@include respond(md) {
+// The bar holds up to seven links plus the account area, so the menu collapses
+// into the hamburger panel below 1200px (wider than the 900px used elsewhere).
+@media (min-width: 1201px) {
+  .nav-link { padding: 9px 13px; }
+}
+
+@media (max-width: 1200px) {
   .nav-toggle { display: block; }
 
   // The panel grows from zero height using a grid-row transition, so it
@@ -316,7 +322,7 @@
     opacity: 1;
     transform: none;
 
-    @for $i from 2 through 8 {
+    @for $i from 2 through 10 {
       &:nth-child(#{$i}) { transition-delay: 0s, 0s, #{($i - 2) * 70 + 120}ms, #{($i - 2) * 70 + 120}ms; }
     }
   }

@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useAuth } from "../context/AuthContext";
 import { useDoctors, isDoctorBookable } from "../context/DoctorsContext";
-import useLocalStorage from "../hooks/useLocalStorage";
+import { selectActiveAppointments } from "../store/appointmentsSlice";
 
 function AdminDashboard() {
   const { user } = useAuth();
   const { doctors } = useDoctors();
-  const [appointments] = useLocalStorage("aethercareAppointments", []);
+  // Redux: cancelled bookings are left out because they no longer hold a slot.
+  const appointments = useSelector(selectActiveAppointments);
 
   if (!user || user.role !== "admin") {
     return (
@@ -34,7 +36,7 @@ function AdminDashboard() {
 
         <div className="dashboard-stats">
           <div><span>Total doctors</span><strong>{doctors.length}</strong></div>
-          <div><span>Total appointments</span><strong>{appointments.length}</strong></div>
+          <div><span>Active appointments</span><strong>{appointments.length}</strong></div>
           <div><span>On leave</span><strong>{doctors.filter((d) => !isDoctorBookable(d)).length}</strong></div>
         </div>
 

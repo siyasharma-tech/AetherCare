@@ -18,6 +18,12 @@ function MedicalRecords() {
             <h1>Medical records</h1>
             <p>View your saved consultation and lab-report information.</p>
           </div>
+          <span className="sample-badge">Sample data</span>
+        </div>
+
+        <div className="notice" role="note">
+          <strong>Sample records.</strong> These entries are demonstration data, not real patient records. AetherCare
+          is not connected to any hospital or laboratory system.
         </div>
 
         <div className="records-grid">

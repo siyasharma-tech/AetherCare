@@ -1,0 +1,12 @@
+[
+  { "id": 1, "category": "Activity", "title": "Move a little every day", "summary": "Adults are generally advised to aim for about 150 minutes of moderate activity a week, such as brisk walking. Short walks after meals count." },
+  { "id": 2, "category": "Sleep", "title": "Keep a steady sleep routine", "summary": "Most adults do best with 7 to 9 hours of sleep. Going to bed and waking up at similar times, even on weekends, helps your body clock." },
+  { "id": 3, "category": "Nutrition", "title": "Fill half your plate with plants", "summary": "Vegetables, fruit, pulses and whole grains give fibre and nutrients. Try adding one extra portion of vegetables to a meal each day." },
+  { "id": 4, "category": "Nutrition", "title": "Go easy on salt and sugary drinks", "summary": "Too much salt can raise blood pressure, and sugary drinks add calories without filling you up. Water is a simple swap." },
+  { "id": 5, "category": "Hygiene", "title": "Wash your hands properly", "summary": "Wash with soap and water for about 20 seconds, especially before eating and after using the toilet. It lowers the spread of many infections." },
+  { "id": 6, "category": "Dental", "title": "Brush twice a day", "summary": "Brush for two minutes, morning and night, with fluoride toothpaste. Clean between your teeth daily and visit a dentist for regular check-ups." },
+  { "id": 7, "category": "Mind", "title": "Take short breaks from screens", "summary": "Pause every hour to stretch and look at something far away. Regular breaks ease tired eyes and a stiff neck." },
+  { "id": 8, "category": "Mind", "title": "Talk about stress early", "summary": "Sharing worries with a friend, family member or professional can help. Reach out for support if low mood or anxiety lasts for weeks." },
+  { "id": 9, "category": "Heart", "title": "Know your numbers", "summary": "Blood pressure and cholesterol often show no symptoms. Regular check-ups let a doctor spot changes early." },
+  { "id": 10, "category": "Safety", "title": "Know when to seek urgent help", "summary": "Chest pain, trouble breathing, sudden weakness or confusion need emergency care straight away. Do not wait for an appointment." }
+]

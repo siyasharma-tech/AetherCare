@@ -2,30 +2,36 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { usePatients } from "../context/PatientsContext";
+import { useToast } from "../context/ToastContext";
+import useForm from "../hooks/useForm";
+import { minLength, required, validateField } from "../utils/validators";
+import TextField from "../components/form/TextField";
 
 function PatientLogin() {
   const { login } = useAuth();
   const { findPatientByName, addPatient } = usePatients();
   const navigate = useNavigate();
 
+  const { showToast } = useToast();
   const [mode, setMode] = useState("signin");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // problems found by the account check (not field rules)
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // Field rules: sign-up asks for a slightly stronger password than sign-in.
+  const form = useForm({ name: "", password: "" }, (v) => {
+    const errors = {};
+    const nameError = validateField(v.name, [required("Name")]);
+    const passwordError = validateField(
+      v.password,
+      mode === "signup" ? [required("Password"), minLength(4, "Password")] : [required("Password")]
+    );
+    if (nameError) errors.name = nameError;
+    if (passwordError) errors.password = passwordError;
+    return errors;
+  });
 
+  const handleSubmit = ({ name, password }) => {
+    setError("");
     const trimmedName = name.trim();
-    if (!trimmedName) {
-      setError("Please enter your name.");
-      return;
-    }
-
-    if (!password) {
-      setError("Please enter a password.");
-      return;
-    }
 
     const existingPatient = findPatientByName(trimmedName);
 
@@ -39,7 +45,8 @@ function PatientLogin() {
         return;
       }
       login("patient", existingPatient.id);
-      navigate("/profile");
+      showToast(`Welcome back, ${existingPatient.name.split(" ")[0]}.`);
+      navigate("/dashboard");
       return;
     }
 
@@ -51,6 +58,7 @@ function PatientLogin() {
 
     const newPatient = addPatient({ name: trimmedName, password });
     login("patient", newPatient.id);
+    showToast("Account created. Welcome to AetherCare.");
     navigate("/profile");
   };
 
@@ -75,47 +83,47 @@ function PatientLogin() {
               <button
                 type="button"
                 className={mode === "signin" ? "tab active" : "tab"}
-                onClick={() => { setMode("signin"); setError(""); }}
+                onClick={() => { setMode("signin"); setError(""); form.reset(); }}
               >
                 Sign in
               </button>
               <button
                 type="button"
                 className={mode === "signup" ? "tab active" : "tab"}
-                onClick={() => { setMode("signup"); setError(""); }}
+                onClick={() => { setMode("signup"); setError(""); form.reset(); }}
               >
                 Sign up
               </button>
             </div>
 
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="patient-name">Full name</label>
-                <input
-                  id="patient-name"
-                  name="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => { setName(e.target.value); setError(""); }}
-                  placeholder="e.g. Riddhi Sharma"
-                  autoComplete="name"
-                />
-              </div>
+            <form onSubmit={form.handleSubmit(handleSubmit)} noValidate>
+              <TextField
+                label="Full name"
+                name="name"
+                id="patient-name"
+                required
+                value={form.values.name}
+                onChange={(e) => { form.handleChange(e); setError(""); }}
+                onBlur={form.handleBlur}
+                error={form.getError("name")}
+                placeholder="e.g. Riddhi Sharma"
+                autoComplete="name"
+              />
 
-              <div className="form-group">
-                <label htmlFor="patient-password">
-                  {mode === "signin" ? "Password" : "Create password"}
-                </label>
-                <input
-                  id="patient-password"
-                  name="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => { setPassword(e.target.value); setError(""); }}
-                  placeholder={mode === "signin" ? "Enter your password" : "Choose a password"}
-                  autoComplete="current-password"
-                />
-              </div>
+              <TextField
+                label={mode === "signin" ? "Password" : "Create password"}
+                name="password"
+                id="patient-password"
+                type="password"
+                required
+                value={form.values.password}
+                onChange={(e) => { form.handleChange(e); setError(""); }}
+                onBlur={form.handleBlur}
+                error={form.getError("password")}
+                hint={mode === "signup" ? "At least 4 characters." : undefined}
+                placeholder={mode === "signin" ? "Enter your password" : "Choose a password"}
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+              />
 
               {error && (
                 <p className="form-error" key={error} role="alert">

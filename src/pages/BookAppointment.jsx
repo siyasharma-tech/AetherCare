@@ -1,96 +1,113 @@
-import { useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { useDoctors, isDoctorBookable } from "../context/DoctorsContext";
 import { useAuth } from "../context/AuthContext";
 import { usePatients } from "../context/PatientsContext";
-import useLocalStorage from "../hooks/useLocalStorage";
+import { useToast } from "../context/ToastContext";
+import { addAppointment, selectActiveAppointments } from "../store/appointmentsSlice";
+import useForm from "../hooks/useForm";
+import { maxLength, minLength, required, validateField } from "../utils/validators";
 import { getOpenSlots, isPastDate, isPastSlot, todayISO } from "../utils/slots";
+import { formatDate } from "../utils/appointments";
+import PageHeader from "../components/PageHeader";
+import EmptyState from "../components/EmptyState";
+import SelectField from "../components/form/SelectField";
+import TextField from "../components/form/TextField";
+import TextAreaField from "../components/form/TextAreaField";
+
+// Slots a doctor still offers on a date (removed ones hidden, past ones hidden).
+const slotsFor = (doctors, doctorId, date) => {
+  const doctor = doctors.find((item) => item.id === Number(doctorId));
+  if (!doctor || !date) return [];
+  return getOpenSlots(doctor, date).filter((slot) => !isPastSlot(date, slot));
+};
 
 function BookAppointment() {
   const { doctors } = useDoctors();
   const { user } = useAuth();
   const { getPatient } = usePatients();
+  const { showToast } = useToast();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const reasonRef = useRef(null);
-  const doctorId = Number(searchParams.get("doctor"));
 
-  const selectedDoctor = doctors.find((doctor) => doctor.id === doctorId) || doctors[0];
+  // Redux: read the shared appointment list and get a dispatch function to change it.
+  const appointments = useSelector(selectActiveAppointments);
+  const dispatch = useDispatch();
 
-  const [appointments, setAppointments] = useLocalStorage("aethercareAppointments", []);
-  const [doctor, setDoctor] = useState(String(selectedDoctor.id));
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [reason, setReason] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
-
-  const currentDoctor = useMemo(
-    () => doctors.find((item) => item.id === Number(doctor)),
-    [doctors, doctor]
-  );
+  const bookableDoctors = doctors.filter(isDoctorBookable);
+  const requestedId = Number(searchParams.get("doctor"));
+  const startDoctor =
+    bookableDoctors.find((doctor) => doctor.id === requestedId) || bookableDoctors[0] || doctors[0];
 
   const patient = user?.role === "patient" ? getPatient(user.patientId) : null;
 
-  // A slot (doctor + date + time) is taken once one patient has booked it.
-  const isSlotTaken = (targetDate, targetTime) =>
-    appointments.some(
-      (a) => a.doctorId === currentDoctor.id && a.date === targetDate && a.time === targetTime
-    );
+  // Local state: only this page cares whether the booking has been confirmed.
+  const [confirmed, setConfirmed] = useState(null);
 
-  // Only slots the doctor still offers on this date (removed ones are hidden),
-  // and not already in the past if the date is today.
-  const availableSlots = useMemo(() => {
-    if (!date || !currentDoctor) return [];
-    return getOpenSlots(currentDoctor, date).filter((slot) => !isPastSlot(date, slot));
-  }, [currentDoctor, date]);
+  const isSlotTaken = (doctorId, date, time) =>
+    appointments.some((a) => a.doctorId === Number(doctorId) && a.date === date && a.time === time);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError("");
+  // Rules for each field. The function returns an object of error messages.
+  const validate = (v) => {
+    const errors = {};
+    if (!v.doctor) errors.doctor = "Please choose a doctor.";
 
-    if (!patient) {
-      setError("Please sign in as a patient to book an appointment.");
-      return;
+    if (!v.date) errors.date = "Please choose a date.";
+    else if (isPastDate(v.date)) errors.date = "You can't book a past date. Choose today or later.";
+
+    if (!v.time) {
+      errors.time = v.date ? "Please choose a time." : "Pick a date first, then choose a time.";
+    } else if (!slotsFor(doctors, v.doctor, v.date).includes(v.time)) {
+      errors.time = `The ${v.time} slot is no longer available on this date. Please choose another.`;
+    } else if (isSlotTaken(v.doctor, v.date, v.time)) {
+      errors.time = `The ${v.time} slot on this date is already booked. Please choose another.`;
     }
 
-    if (!date || !time || !reason.trim()) return;
-
-    if (isPastDate(date)) {
-      setError("You can't book an appointment for a past date. Please choose today or later.");
-      return;
-    }
-
-    if (!availableSlots.includes(time)) {
-      setError(`The ${time} slot is no longer available on ${date}. Please choose another time.`);
-      setTime("");
-      return;
-    }
-
-    // Re-check right before booking in case the slot was taken in the meantime.
-    if (isSlotTaken(date, time)) {
-      setError(`The ${time} slot on ${date} is already booked. Please choose another time.`);
-      return;
-    }
-
-    const newAppointment = {
-      id: Date.now(),
-      doctorId: currentDoctor.id,
-      doctorName: currentDoctor.name,
-      specialty: currentDoctor.specialty,
-      patientId: patient.id,
-      patientName: patient.name,
-      date,
-      time,
-      reason: reason.trim(),
-      status: "Confirmed"
-    };
-
-    setAppointments([...appointments, newAppointment]);
-    setSubmitted(true);
+    const reasonError = validateField(v.reason, [
+      required("Reason for visit"),
+      minLength(10, "Reason for visit"),
+      maxLength(300, "Reason for visit")
+    ]);
+    if (reasonError) errors.reason = reasonError;
+    return errors;
   };
 
-  if (submitted) {
+  const form = useForm(
+    { doctor: String(startDoctor?.id ?? ""), date: "", time: "", reason: "" },
+    validate
+  );
+  const { values } = form;
+
+  const currentDoctor = useMemo(
+    () => doctors.find((doctor) => doctor.id === Number(values.doctor)),
+    [doctors, values.doctor]
+  );
+  const availableSlots = slotsFor(doctors, values.doctor, values.date);
+
+  // Changing the doctor or date makes the chosen time invalid, so clear it.
+  const handleDoctorOrDateChange = (event) => {
+    form.handleChange(event);
+    form.setValue("time", "");
+  };
+
+  const onValid = (v) => {
+    dispatch(
+      addAppointment({
+        doctorId: currentDoctor.id,
+        doctorName: currentDoctor.name,
+        specialty: currentDoctor.specialty,
+        patientId: patient.id,
+        patientName: patient.name,
+        date: v.date,
+        time: v.time,
+        reason: v.reason.trim()
+      })
+    );
+    showToast(`Appointment booked with ${currentDoctor.name}.`);
+    setConfirmed({ doctor: currentDoctor, date: v.date, time: v.time });
+  };
+
+  if (confirmed) {
     return (
       <main className="page">
         <div className="container success-page">
@@ -98,13 +115,12 @@ function BookAppointment() {
           <span className="eyebrow">BOOKING CONFIRMED</span>
           <h1>Your appointment is confirmed.</h1>
           <p>
-            Your appointment with <strong>{currentDoctor.name}</strong> is saved
-            on this device.
+            Your appointment with <strong>{confirmed.doctor.name}</strong> is saved on this device.
           </p>
           <div className="success-summary">
-            <span>📆 {date}</span>
-            <span>🕐 {time}</span>
-            <span>👨‍⚕️ {currentDoctor.specialty}</span>
+            <span>📆 {formatDate(confirmed.date)}</span>
+            <span>🕐 {confirmed.time}</span>
+            <span>👨‍⚕️ {confirmed.doctor.specialty}</span>
           </div>
           <div className="hero-actions">
             <Link to="/appointments" className="primary-btn">View Appointments</Link>
@@ -118,15 +134,38 @@ function BookAppointment() {
   if (!patient) {
     return (
       <main className="page">
-        <div className="container empty-state">
-          <span>🔒</span>
-          <h1>Patient sign-in required</h1>
-          <p>Please sign in as a patient to book an appointment.</p>
-          <Link to="/login/patient" className="primary-btn">Go to patient login</Link>
+        <div className="container">
+          <EmptyState as="h1" icon="🔒" title="Patient sign-in required" text="Please sign in as a patient to book an appointment.">
+            <Link to="/login/patient" className="primary-btn">Go to patient login</Link>
+          </EmptyState>
         </div>
       </main>
     );
   }
+
+  if (!currentDoctor) {
+    return (
+      <main className="page">
+        <div className="container">
+          <EmptyState as="h1" icon="👨‍⚕️" title="No doctors to book yet" text="Doctors who sign up will appear here.">
+            <Link to="/doctors" className="primary-btn">Back to Doctors</Link>
+          </EmptyState>
+        </div>
+      </main>
+    );
+  }
+
+  const timeOptions = [
+    { value: "", label: "Select time" },
+    ...availableSlots.map((slot) => {
+      const taken = isSlotTaken(values.doctor, values.date, slot);
+      return { value: slot, label: taken ? `${slot} — already booked` : slot, disabled: taken };
+    })
+  ];
+
+  let timeHint = "";
+  if (!values.date) timeHint = "Pick a date to see the available slots.";
+  else if (availableSlots.length === 0) timeHint = "No slots available on this date. Please try another day.";
 
   return (
     <main className="page">
@@ -146,85 +185,61 @@ function BookAppointment() {
           </div>
         </div>
 
-        <form className="appointment-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="patientName">Patient name</label>
-            <input id="patientName" type="text" value={patient.name} disabled />
-          </div>
+        <form className="appointment-form" onSubmit={form.handleSubmit(onValid)} noValidate>
+          <TextField label="Patient name" name="patientName" value={patient.name} onChange={() => {}} disabled />
 
-          <div className="form-group">
-            <label htmlFor="doctor">Doctor</label>
-            <select
-              id="doctor"
-              value={doctor}
-              onChange={(e) => { setDoctor(e.target.value); setTime(""); setError(""); }}
-            >
-              {doctors.filter((item) => isDoctorBookable(item)).map((item) => (
-                <option value={item.id} key={item.id}>{item.name} — {item.specialty}</option>
-              ))}
-            </select>
-          </div>
+          <SelectField
+            label="Doctor"
+            name="doctor"
+            required
+            value={values.doctor}
+            onChange={handleDoctorOrDateChange}
+            onBlur={form.handleBlur}
+            error={form.getError("doctor")}
+            options={bookableDoctors.map((item) => ({
+              value: String(item.id),
+              label: `${item.name} — ${item.specialty}`
+            }))}
+          />
 
           <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="date">Date</label>
-              <input
-                id="date"
-                type="date"
-                min={todayISO()}
-                value={date}
-                onChange={(e) => { setDate(e.target.value); setTime(""); setError(""); }}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="time">Time</label>
-              <select
-                id="time"
-                value={time}
-                onChange={(e) => { setTime(e.target.value); setError(""); }}
-                required
-              >
-                <option value="">Select time</option>
-                {availableSlots.map((item) => {
-                  const taken = date ? isSlotTaken(date, item) : false;
-                  return (
-                    <option key={item} value={item} disabled={taken}>
-                      {item}{taken ? " — already booked" : ""}
-                    </option>
-                  );
-                })}
-              </select>
-              {!date && (
-                <p className="panel-hint" style={{ marginTop: 6 }}>Pick a date to see the available slots.</p>
-              )}
-              {date && availableSlots.length === 0 && (
-                <p className="panel-hint" style={{ marginTop: 6 }}>
-                  No slots available on this date. Please try another day.
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="reason">Reason for visit</label>
-            <textarea
-              ref={reasonRef}
-              id="reason"
-              rows="5"
-              placeholder="Briefly describe the reason for your appointment..."
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
+            <TextField
+              label="Date"
+              name="date"
+              type="date"
               required
+              min={todayISO()}
+              value={values.date}
+              onChange={handleDoctorOrDateChange}
+              onBlur={form.handleBlur}
+              error={form.getError("date")}
+            />
+
+            <SelectField
+              label="Time"
+              name="time"
+              required
+              value={values.time}
+              onChange={form.handleChange}
+              onBlur={form.handleBlur}
+              error={form.getError("time")}
+              hint={timeHint}
+              options={timeOptions}
             />
           </div>
 
-          {error && (
-            <p className="form-error" key={error} role="alert">
-              {error}
-            </p>
-          )}
+          <TextAreaField
+            label="Reason for visit"
+            name="reason"
+            required
+            rows={5}
+            maxLength={300}
+            placeholder="Briefly describe the reason for your appointment..."
+            value={values.reason}
+            onChange={form.handleChange}
+            onBlur={form.handleBlur}
+            error={form.getError("reason")}
+          />
 
           <button type="submit" className="primary-btn full">Confirm Appointment →</button>
           <p className="form-note">Payments aren't processed yet — your appointment is confirmed at no charge.</p>

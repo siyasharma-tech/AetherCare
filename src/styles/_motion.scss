@@ -40,3 +40,11 @@
   0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-9px); }
 }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+}

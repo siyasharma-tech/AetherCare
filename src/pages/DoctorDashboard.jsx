@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useAuth } from "../context/AuthContext";
 import { useDoctors } from "../context/DoctorsContext";
 import { getBlockedSlots, getOpenSlots, nextDays } from "../utils/slots";
+import { selectActiveAppointmentsByDoctor } from "../store/appointmentsSlice";
+import { byDateAsc, displayStatus, formatDate } from "../utils/appointments";
 
 function DoctorDashboard() {
   const { user, logout } = useAuth();
   const { getDoctor, toggleLeave, addTiming, removeTiming, blockSlot, unblockSlot, removeDoctor } = useDoctors();
   const [newTime, setNewTime] = useState("");
   const navigate = useNavigate();
+  // Redux: this doctor's booked (not cancelled) appointments, shared with the patient pages.
+  const booked = useSelector((state) => selectActiveAppointmentsByDoctor(state, user?.doctorId));
 
   if (!user || user.role !== "doctor") {
     return (
@@ -39,6 +44,7 @@ function DoctorDashboard() {
   }
 
   const week = nextDays(7);
+  const upcomingBookings = [...booked].filter((a) => displayStatus(a) === "Confirmed").sort(byDateAsc);
 
   const handleAddTime = (e) => {
     e.preventDefault();
@@ -91,6 +97,29 @@ function DoctorDashboard() {
             <strong>₹{doctor.fee}</strong>
           </div>
         </div>
+
+        <section className="schedule-panel">
+          <h3>Your booked appointments</h3>
+          <p className="panel-hint">Upcoming patients, soonest first. Cancelled bookings are not shown.</p>
+          {upcomingBookings.length > 0 ? (
+            <ul className="booking-list">
+              {upcomingBookings.map((a) => (
+                <li key={a.id}>
+                  <div>
+                    <strong>{a.patientName || "Unnamed patient"}</strong>
+                    <span>{a.reason}</span>
+                  </div>
+                  <div className="booking-when">
+                    <strong>{formatDate(a.date)}</strong>
+                    <span>{a.time}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="panel-hint">No upcoming appointments yet. Booked visits will appear here.</p>
+          )}
+        </section>
 
         <section className="schedule-panel">
           <h3>Leave status</h3>

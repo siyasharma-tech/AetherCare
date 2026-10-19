@@ -123,8 +123,12 @@ function Navbar() {
               />
               <NavLink to="/" className={linkClass}>Home</NavLink>
               <NavLink to="/doctors" className={linkClass}>Doctors</NavLink>
+              {user?.role === "patient" && (
+                <NavLink to="/dashboard" className={linkClass}>Dashboard</NavLink>
+              )}
               <NavLink to="/appointments" className={linkClass}>Appointments</NavLink>
               <NavLink to="/records" className={linkClass}>Records</NavLink>
+              <NavLink to="/health-info" className={linkClass}>Health Info</NavLink>
               <NavLink to="/profile" className={linkClass}>Profile</NavLink>
               {user?.role === "doctor" && (
                 <NavLink to="/doctor" className={linkClass}>My Schedule</NavLink>
