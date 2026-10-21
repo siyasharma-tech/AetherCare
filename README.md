@@ -12,7 +12,7 @@ This is a front-end implementation with all data persisted in the browser (`loca
 # 1. Unzip the project, then open a terminal inside the aethercare folder
 cd aethercare
 
-# 2. Install the dependencies (React, React Router, Redux Toolkit, react-redux, Vite, Sass)
+# 2. Install the dependencies (React, React Router, Redux Toolkit, react-redux, Vite)
 npm install
 
 # 3. Start the development server
@@ -34,6 +34,8 @@ On Windows you can also double-click `setup-and-run.bat`. It does a clean reinst
 book an appointment, then look at the Dashboard and Appointments pages. Doctor demo accounts use the password
 `AetherCare` (for example *Arjun Kapoor* under *General Physician*), and the admin login is listed below.
 
+**For college evaluation:** see [EVALUATION_GUIDE.md](EVALUATION_GUIDE.md) for the syllabus mapping, a demo sequence and viva questions with answers based on this code.
+
 ## What's New in This Version
 
 | Area | What was added |
@@ -53,6 +55,7 @@ book an appointment, then look at the Dashboard and Appointments pages. Doctor d
 - **Booking reason** must be at least 10 characters; **patient sign-up passwords** must be at least 4 characters.
 - The navbar switches to the hamburger menu below 1200px wide (it was 900px) because it now has more links.
 - The admin stat "Total appointments" is now **Active appointments** (cancelled bookings are not counted).
+- **All styling is now plain CSS.** The SCSS files were converted to equivalent `.css` files; the `sass` package is no longer needed. Colours and sizes are CSS variables (for example `var(--teal)`), defined in `src/styles/tokens.css`.
 - Bookings saved by the earlier version still load, because the same `localStorage` key and data shape are used.
 
 ## Light and Dark Theme
@@ -94,7 +97,7 @@ A toggle in the navbar switches between light and dark. The choice is saved, and
 - **React Context API** for theme, auth, doctor, patient and toast-message state
 - **Redux Toolkit** (`@reduxjs/toolkit` + `react-redux`) for the shared appointment list
 - Custom hooks: `useLocalStorage`, `useForm` and `useFetch`
-- **SCSS** (Sass) with a design-token file, mixins and one partial per area; transitions and keyframes live in shared mixins and respect `prefers-reduced-motion`
+- **Plain CSS** (no SCSS or Sass): colours, radii, shadows and timings are CSS variables in `tokens.css`, there is one CSS file per area of the site, and animations respect `prefers-reduced-motion`
 
 ## State Management: What Lives Where
 
@@ -121,7 +124,7 @@ src/
   data/         Seed data for doctors and sample medical records
   hooks/        useLocalStorage, useForm, useFetch
   pages/        Route-level views (Home, Dashboard, Appointments, HealthInfo, Contact, ...)
-  styles/       SCSS: _tokens, _mixins, _motion plus one partial per area, joined in main.scss
+  styles/       Plain CSS: tokens.css (variables), base.css, motion.css plus one file per area, joined by @import in main.css
   utils/        slots.js, appointments.js, validators.js
 public/
   data/health-tips.json   Sample content fetched by the Health Info page

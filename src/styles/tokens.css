@@ -1,0 +1,134 @@
+/* ---------------------------------------------------------------
+   Design tokens: the colours, sizes and timings used across the site.
+
+   Every colour is a CSS custom property (a "CSS variable"). The light
+   palette is the default; the dark palette overrides the same names when
+   <html> has data-theme="dark" (ThemeContext sets that attribute).
+   Use a token anywhere with var(--name), for example:  color: var(--ink);
+   --------------------------------------------------------------- */
+
+/* Light theme (default) */
+:root {
+  /* Page and surfaces */
+  --page-bg: #f5f9fd;
+  --surface: #ffffff;
+  --surface-2: #fbfdfd;
+  --pill: #ffffff;
+  --soft: #eef5fb;
+  --mint: #e7f2fa;
+  --hero-a: #eef6fc;
+  --hero-b: #f8fbfd;
+  --hero-c: #e7f2fa;
+  --glow: #d7e9f7;
+
+  /* Text */
+  --deep: #15304a;
+  --ink: #15304a;
+  --muted: #62788f;
+  --muted-soft: #8a9896;
+
+  /* Brand blue */
+  --teal: #1c6fb0;
+  --teal-dark: #124d80;
+  --teal-light: #57b8d1;
+  --btn: #1c6fb0;
+  --btn-hover: #124d80;
+
+  /* Borders */
+  --line: #dae6f0;
+  --line-mid: #c4dbef;
+  --line-strong: #b9d4ec;
+  --line-deep: #9cc3e8;
+  --focus-border: #7fb3e0;
+  --dash-border: #c9dced;
+
+  /* Status colours */
+  --danger: #b64c4c;
+  --danger-bg: #fdecec;
+  --danger-line: #f1c6c6;
+  --danger-ink: #8a3d3d;
+  --success: #167a55;
+  --success-bg: #e7f7ef;
+  --unavail-fg: #9a5a5a;
+  --unavail-bg: #f9eaea;
+  --gold: #9a6c18;
+
+  /* Shadow colour */
+  --shadow-ink: #143c64;
+}
+
+/* Dark theme */
+:root[data-theme="dark"] {
+  /* Page and surfaces */
+  --page-bg: #0a1523;
+  --surface: #101e30;
+  --surface-2: #14253a;
+  --pill: #214261;
+  --soft: #14283d;
+  --mint: #173551;
+  --hero-a: #0e2037;
+  --hero-b: #0a1523;
+  --hero-c: #112a45;
+  --glow: #14304c;
+
+  /* Text */
+  --deep: #070f1b;
+  --ink: #e7eef7;
+  --muted: #93a8bf;
+  --muted-soft: #6f849b;
+
+  /* Brand blue */
+  --teal: #5ab0ee;
+  --teal-dark: #8dc9f6;
+  --teal-light: #6fc6dd;
+  --btn: #2477bd;
+  --btn-hover: #3a8ad0;
+
+  /* Borders */
+  --line: #23394f;
+  --line-mid: #2c4663;
+  --line-strong: #355577;
+  --line-deep: #44688f;
+  --focus-border: #4f8fcb;
+  --dash-border: #2f4a66;
+
+  /* Status colours */
+  --danger: #f08585;
+  --danger-bg: #3a1c24;
+  --danger-line: #6e3039;
+  --danger-ink: #f4a9a9;
+  --success: #4fcf9f;
+  --success-bg: #11382d;
+  --unavail-fg: #e3a3a3;
+  --unavail-bg: #3a2125;
+  --gold: #e6b85c;
+
+  /* Shadow colour */
+  --shadow-ink: #000000;
+}
+
+/* Sizes and timings that do not change with the theme */
+:root {
+  /* Pure white, for text that sits on coloured or always-dark backgrounds */
+  --white: #ffffff;
+
+  /* Corner radius */
+  --radius-sm: 9px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  /* Shadows: a tight contact shadow plus a soft ambient one */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, var(--shadow-ink) 6%, transparent), 0 2px 10px color-mix(in srgb, var(--shadow-ink) 4%, transparent);
+  --shadow-md: 0 18px 50px color-mix(in srgb, var(--shadow-ink) 10%, transparent);
+  --shadow-lift: 0 2px 4px color-mix(in srgb, var(--shadow-ink) 5%, transparent), 0 22px 44px -14px color-mix(in srgb, var(--shadow-ink) 24%, transparent);
+  --shadow: var(--shadow-md);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t-fast: 0.3s;
+  --t-base: 0.45s;
+  --t-slow: 0.8s;
+}

@@ -1,0 +1,243 @@
+/* One shared look for every text field, dropdown and textarea. */
+.form-group input,
+.form-group select,
+.form-group textarea,
+.filter-bar select,
+.add-timing-form input {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 13px 14px;
+  outline: 0;
+  color: var(--ink);
+  transition:
+    border-color var(--t-base) var(--ease-out),
+    box-shadow var(--t-base) var(--ease-out),
+    background-color var(--t-base) var(--ease-out);
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover,
+.filter-bar select:hover,
+.add-timing-form input:hover {
+  border-color: var(--line-strong);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
+.filter-bar select:focus,
+.add-timing-form input:focus {
+  border-color: var(--focus-border);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--teal) 12%, transparent);
+}
+
+.form-group input:disabled,
+.form-group select:disabled,
+.form-group textarea:disabled,
+.filter-bar select:disabled,
+.add-timing-form input:disabled {
+  background: var(--soft);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  transition: color var(--t-base) var(--ease-out);
+}
+
+/* The label picks up the brand colour while its field is being edited. */
+.form-group:focus-within label {
+  color: var(--teal);
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 650px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+.form-note {
+  text-align: center;
+  color: var(--muted-soft);
+  font-size: 10px;
+  margin: 14px 0 0;
+}
+
+/* Errors arrive with a short shake so they are noticed. The pages give the
+   element a changing key, so a repeated mistake shakes again. */
+.form-error {
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 700;
+  margin: -8px 0 16px;
+  animation: shake 0.6s var(--ease-out);
+}
+
+.save-message {
+  grid-column: 1 / -1;
+  color: var(--success);
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 13px;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.filter-bar select {
+  width: 220px;
+}
+
+@media (max-width: 650px) {
+  .filter-bar {
+    flex-direction: column;
+  }
+  .filter-bar select {
+    width: 100%;
+  }
+}
+
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 0 15px;
+  transition:
+    border-color var(--t-base) var(--ease-out),
+    box-shadow var(--t-base) var(--ease-out);
+}
+
+.search-box:hover {
+  border-color: var(--line-strong);
+}
+
+.search-box:focus-within {
+  border-color: var(--focus-border);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--teal) 12%, transparent);
+}
+
+.search-box span {
+  font-size: 24px;
+  color: var(--muted);
+  transition: color var(--t-base) var(--ease-out);
+}
+
+.search-box:focus-within span {
+  color: var(--teal);
+}
+
+.search-box input {
+  border: 0;
+  outline: 0;
+  width: 100%;
+  padding: 14px 0;
+  background: transparent;
+}
+
+.form-layout {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 70px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .form-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+.form-intro h1 {
+  font-size: 46px;
+}
+
+@media (max-width: 650px) {
+  .form-intro h1 {
+    font-size: 39px;
+  }
+}
+
+.form-intro > p {
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 450px;
+}
+
+.mini-doctor {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  margin-top: 35px;
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  padding: 15px;
+  max-width: 390px;
+}
+
+.mini-doctor div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mini-doctor span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.appointment-form,
+.profile-form {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 30px;
+  border-radius: 18px;
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 650px) {
+  .appointment-form {
+    padding: 22px;
+  }
+}
+
+.add-timing-form {
+  display: flex;
+  gap: 10px;
+}
+
+.add-timing-form input {
+  flex: 1;
+  width: auto;
+}

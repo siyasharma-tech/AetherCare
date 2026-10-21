@@ -19,7 +19,6 @@
     "@vitejs/plugin-react": "^4.3.4",
     "browserslist": "^4.24.0",
     "caniuse-lite": "^1.0.30001700",
-    "sass": "^1.83.0",
     "vite": "^6.3.5"
   }
 }

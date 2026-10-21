@@ -1,0 +1,147 @@
+.records-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+@media (max-width: 900px) {
+  .records-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .records-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.record-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 22px;
+  transition:
+    transform var(--t-base) var(--ease-out),
+    box-shadow var(--t-base) var(--ease-out),
+    border-color var(--t-base) var(--ease-out);
+}
+
+.record-card:hover,
+.record-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-lift);
+}
+
+.record-card > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.record-card h3 {
+  margin: 8px 0 5px;
+  font-size: 16px;
+}
+
+.record-icon {
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  background: var(--mint);
+  color: var(--teal);
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--t-base) var(--ease-out),
+    color var(--t-base) var(--ease-out),
+    transform var(--t-base) var(--ease-out);
+}
+
+.record-card:hover .record-icon,
+.record-card:focus-visible .record-icon {
+  background: var(--btn);
+  color: var(--white);
+  transform: scale(1.08);
+}
+
+.record-type {
+  display: block;
+  color: var(--teal);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-top: 20px;
+}
+
+.record-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  padding-top: 15px;
+  margin-top: 18px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* ---- Details dialog -------------------------------------------------
+   It only exists while open, so the animation plays each time it appears. */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 48, 70, 0.45);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+  padding: 20px;
+  animation: fade-in 0.4s ease-out;
+}
+
+.modal {
+  width: min(500px, 100%);
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+  animation: modal-in 0.55s var(--ease-out);
+}
+
+.modal h2 {
+  margin: 0 0 20px;
+  font-family: "Manrope", sans-serif;
+}
+
+.modal p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.close-btn {
+  position: absolute;
+  right: 18px;
+  top: 14px;
+  border: 0;
+  background: none;
+  font-size: 26px;
+  color: var(--muted);
+  transition: transform var(--t-base) var(--ease-out), color var(--t-base) var(--ease-out);
+}
+
+.close-btn:hover {
+  color: var(--ink);
+  transform: rotate(90deg);
+}
+
+.note-box {
+  background: var(--soft);
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 13px;
+  margin-top: 15px;
+}

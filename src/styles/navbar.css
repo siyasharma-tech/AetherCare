@@ -1,0 +1,425 @@
+/* ---------------------------------------------------------------
+   Navbar
+   Desktop: logo | segmented link group with a gliding pill | account
+   Mobile:  logo | menu button, links drop down in a panel
+   --------------------------------------------------------------- */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  border-bottom: 1px solid transparent;
+  backdrop-filter: blur(16px) saturate(1.5);
+  transition:
+    background-color var(--t-base) var(--ease-out),
+    border-color var(--t-base) var(--ease-out),
+    box-shadow var(--t-base) var(--ease-out);
+  /* Once the page has scrolled the bar becomes more solid and casts a shadow. */
+}
+
+.navbar.scrolled {
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  border-bottom-color: var(--line);
+  box-shadow: 0 10px 30px -14px color-mix(in srgb, var(--shadow-ink) 22%, transparent);
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* Thin reading-progress line along the bottom edge. Its width is set
+   from scroll position in Navbar.jsx, so it has no transition of its own. */
+.nav-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal-light), var(--teal));
+  transform-origin: left;
+  transform: scaleX(0);
+  pointer-events: none;
+}
+
+/* ---- Logo --------------------------------------------------------- */
+.logo {
+  font-family: "Manrope", sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo span:not(.logo-mark) {
+  color: var(--teal);
+}
+
+.logo:hover .logo-mark {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin-right: 9px;
+  vertical-align: middle;
+  transition: transform 0.55s var(--ease-out);
+}
+
+.logo-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.footer-logo .logo-mark {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 3px;
+}
+
+/* ---- Link group ---------------------------------------------------
+   On desktop the wrapper divs disappear (display: contents) so the links
+   and the account area sit directly in the navbar row. */
+.nav-panel,
+.nav-panel-inner {
+  display: contents;
+}
+
+.nav-links {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: color-mix(in srgb, var(--soft) 90%, transparent);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+}
+
+/* White pill that glides to the hovered, focused or current link. */
+.nav-pill {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  border-radius: var(--radius-pill);
+  background: var(--pill);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--shadow-ink) 10%, transparent),
+    0 6px 14px -4px color-mix(in srgb, var(--shadow-ink) 20%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.7s var(--ease-out),
+    width 0.7s var(--ease-out),
+    opacity var(--t-base) ease;
+}
+
+.nav-pill.visible {
+  opacity: 1;
+}
+
+.nav-link {
+  position: relative;
+  z-index: 1;
+  padding: 9px 16px;
+  border-radius: var(--radius-pill);
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color var(--t-base) var(--ease-out);
+}
+
+.nav-link:hover {
+  color: var(--ink);
+}
+
+.nav-link.active {
+  color: var(--teal);
+}
+
+.nav-link:focus-visible {
+  outline-offset: 0;
+}
+
+/* ---- Account area ------------------------------------------------- */
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.nav-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--mint);
+  color: var(--teal);
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--line);
+}
+
+.nav-user {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.nav-user strong {
+  font-size: 13px;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-user small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.nav-logout {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: var(--radius-pill);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  transition:
+    border-color var(--t-base) var(--ease-out),
+    color var(--t-base) var(--ease-out),
+    background-color var(--t-base) var(--ease-out),
+    transform var(--t-base) var(--ease-out);
+}
+
+.nav-logout:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.nav-logout:active {
+  transform: scale(0.96);
+}
+
+.nav-cta {
+  border-radius: var(--radius-pill);
+  padding: 10px 22px;
+}
+
+/* ---- Desktop order: logo | links (centred) | theme toggle | login ----
+   The theme toggle sits right next to the login / account area, which is
+   pushed to the far right edge. The links take the free space in the middle. */
+.nav-links {
+  order: 1;
+  margin: 0 auto;
+}
+
+.nav-end {
+  order: 2;
+}
+
+.nav-auth,
+.nav-cta {
+  order: 3;
+  margin-left: -10px;
+  /* inner gap 24px -> 14px between toggle and login */
+}
+
+/* ---- Menu button (mobile only) ------------------------------------ */
+.nav-toggle {
+  display: none;
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--t-base) var(--ease-out),
+    border-color var(--t-base) var(--ease-out);
+}
+
+.nav-toggle:hover {
+  background: var(--soft);
+  border-color: var(--line-strong);
+}
+
+/* Three bars that fold into a cross when the menu is open. */
+.nav-toggle span {
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ink);
+  transition:
+    top var(--t-base) var(--ease-out),
+    transform var(--t-base) var(--ease-out),
+    opacity var(--t-base) var(--ease-out);
+}
+
+.nav-toggle span:nth-child(1) {
+  top: 14px;
+}
+
+.nav-toggle span:nth-child(2) {
+  top: 20px;
+}
+
+.nav-toggle span:nth-child(3) {
+  top: 26px;
+}
+
+.nav-toggle[aria-expanded="true"] span:nth-child(1) {
+  top: 20px;
+  transform: rotate(45deg);
+}
+
+.nav-toggle[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle[aria-expanded="true"] span:nth-child(3) {
+  top: 20px;
+  transform: rotate(-45deg);
+}
+
+/* ---- Mobile layout --------------------------------------------------
+   The bar holds up to seven links plus the account area, so the menu collapses
+   into the hamburger panel below 1200px (wider than the 900px used elsewhere). */
+@media (min-width: 1201px) {
+  .nav-link {
+    padding: 9px 13px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .nav-toggle {
+    display: block;
+  }
+  /* The panel grows from zero height using a grid-row transition, so it
+     opens smoothly without measuring anything in JavaScript. */
+  .nav-panel {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    background: color-mix(in srgb, var(--surface) 97%, transparent);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 24px 40px -20px color-mix(in srgb, var(--shadow-ink) 28%, transparent);
+    transition: grid-template-rows 0.65s var(--ease-out), visibility 0s linear 0.65s;
+  }
+  .nav-panel.open {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition: grid-template-rows 0.65s var(--ease-out), visibility 0s;
+  }
+  .nav-panel-inner {
+    display: block;
+    min-height: 0;
+    overflow: hidden;
+    width: min(calc(100% - 28px), 1160px);
+    margin: 0 auto;
+  }
+  .nav-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    margin-top: 12px;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+  }
+  .nav-pill {
+    display: none;
+  }
+  /* Links slide in one after another each time the menu opens. */
+  .nav-link {
+    padding: 13px 14px;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition:
+      color var(--t-base) var(--ease-out),
+      background-color var(--t-base) var(--ease-out),
+      opacity 0.5s var(--ease-out),
+      transform 0.65s var(--ease-out);
+  }
+  .nav-link.active {
+    background: var(--mint);
+  }
+  .nav-link:hover {
+    background: var(--soft);
+  }
+  .nav-link.active:hover {
+    background: var(--mint);
+  }
+  .nav-panel.open .nav-link {
+    opacity: 1;
+    transform: none;
+  }
+  .nav-panel.open .nav-link:nth-child(2) {
+    transition-delay: 0s, 0s, 120ms, 120ms;
+  }
+  .nav-panel.open .nav-link:nth-child(3) {
+    transition-delay: 0s, 0s, 190ms, 190ms;
+  }
+  .nav-panel.open .nav-link:nth-child(4) {
+    transition-delay: 0s, 0s, 260ms, 260ms;
+  }
+  .nav-panel.open .nav-link:nth-child(5) {
+    transition-delay: 0s, 0s, 330ms, 330ms;
+  }
+  .nav-panel.open .nav-link:nth-child(6) {
+    transition-delay: 0s, 0s, 400ms, 400ms;
+  }
+  .nav-panel.open .nav-link:nth-child(7) {
+    transition-delay: 0s, 0s, 470ms, 470ms;
+  }
+  .nav-panel.open .nav-link:nth-child(8) {
+    transition-delay: 0s, 0s, 540ms, 540ms;
+  }
+  .nav-panel.open .nav-link:nth-child(9) {
+    transition-delay: 0s, 0s, 610ms, 610ms;
+  }
+  .nav-panel.open .nav-link:nth-child(10) {
+    transition-delay: 0s, 0s, 680ms, 680ms;
+  }
+  .nav-auth {
+    margin: 10px 0 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .nav-logout {
+    margin-left: auto;
+  }
+  .nav-cta {
+    display: flex;
+    width: 100%;
+    margin: 10px 0 18px;
+    padding: 13px 22px;
+  }
+}

@@ -1,0 +1,217 @@
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+@media (max-width: 650px) {
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-stats div {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition:
+    border-color var(--t-base) var(--ease-out),
+    box-shadow var(--t-base) var(--ease-out),
+    transform var(--t-base) var(--ease-out);
+}
+
+.dashboard-stats div:hover {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.dashboard-stats span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.dashboard-stats strong {
+  font-size: 24px;
+}
+
+.tabs {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  background: transparent;
+  border: 0;
+  padding: 9px 15px;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 12px;
+  transition:
+    background-color var(--t-base) var(--ease-out),
+    color var(--t-base) var(--ease-out),
+    transform var(--t-base) var(--ease-out);
+}
+
+.tab:hover {
+  color: var(--teal);
+  background: color-mix(in srgb, var(--mint) 70%, transparent);
+}
+
+.tab:active {
+  transform: scale(0.96);
+}
+
+.tab.active {
+  background: var(--mint);
+  color: var(--teal);
+}
+
+.appointment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.appointment-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  box-shadow: var(--shadow-sm);
+  padding: 18px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  transition:
+    box-shadow var(--t-base) var(--ease-out),
+    border-color var(--t-base) var(--ease-out);
+}
+
+.appointment-card:hover {
+  border-color: var(--line-mid);
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 650px) {
+  .appointment-card {
+    grid-template-columns: auto 1fr;
+  }
+}
+
+.appointment-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--mint);
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+}
+
+.appointment-info h3 {
+  margin: 0 0 3px;
+  font-size: 15px;
+}
+
+.appointment-info > p {
+  margin: 0;
+  color: var(--teal);
+  font-size: 12px;
+}
+
+.appointment-details {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.reason {
+  margin-top: 7px !important;
+  color: var(--muted-soft) !important;
+  font-size: 11px !important;
+}
+
+.appointment-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 9px;
+}
+
+@media (max-width: 650px) {
+  .appointment-actions {
+    grid-column: 2;
+    align-items: start;
+    flex-direction: row;
+  }
+}
+
+/* ---- Booking confirmed -------------------------------------------- */
+.success-page {
+  text-align: center;
+  max-width: 700px;
+  padding: 80px 20px;
+}
+
+.success-page h1 {
+  font-family: "Manrope", sans-serif;
+  font-size: 45px;
+  letter-spacing: -2px;
+  margin: 0 0 15px;
+}
+
+.success-page p {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* The shared .hero-actions row is left-aligned by default (for the home page),
+   so centre the buttons on this page and let them wrap on narrow screens. */
+.success-page .hero-actions {
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* The tick lands with a small overshoot, then a single ring spreads out
+   from it: confirmation for the action the person just took. */
+.success-icon {
+  width: 70px;
+  height: 70px;
+  display: grid;
+  place-items: center;
+  background: var(--success-bg);
+  color: var(--success);
+  border-radius: 50%;
+  font-size: 30px;
+  margin: 0 auto 25px;
+  animation: pop 0.9s var(--ease-spring) backwards, ring 1.5s 0.5s ease-out;
+}
+
+.success-summary {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 30px 0;
+}
+
+.success-summary span {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 12px;
+  box-shadow: var(--shadow-sm);
+}

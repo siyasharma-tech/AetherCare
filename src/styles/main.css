@@ -1,0 +1,17 @@
+/* All styles are plain CSS. Each file below covers one area of the site.
+   Order matters: later files override earlier ones when rules are equally specific. */
+@import "./tokens.css";
+@import "./base.css";
+@import "./motion.css";
+@import "./buttons.css";
+@import "./navbar.css";
+@import "./theme.css";
+@import "./hero.css";
+@import "./sections.css";
+@import "./forms.css";
+@import "./doctors.css";
+@import "./dashboard.css";
+@import "./records.css";
+@import "./profile.css";
+@import "./components.css";
+@import "./footer.css";
